@@ -14,7 +14,11 @@ When deploying to the Adaptive Edge droplet (adaptiveedge.uk):
 ### Deployment Steps
 1. Build the app: `npm run build`
 2. Copy dist to server: `scp -r dist/* root@adaptiveedge.uk:/var/www/{app-name}/`
-3. Restart PM2 if needed: `pm2 restart {app-name}`
+3. **ALWAYS inject Umami analytics** (in case source doesn't have it):
+   ```bash
+   ssh root@adaptiveedge.uk -i ~/.ssh/nathan_droplet_key "grep -q 'umami' /var/www/{app-name}/public/index.html || sed -i 's|</head>|<script defer src=\"https://adaptiveedge.uk/analytics/script.js\" data-website-id=\"2b2469b6-5537-4486-aeef-f03b576123c8\"></script></head>|' /var/www/{app-name}/public/index.html"
+   ```
+4. Restart PM2 if needed: `pm2 restart {app-name}`
 
 ### Port Allocation
 Check existing ports before assigning: `pm2 list` shows all apps and their ports.
